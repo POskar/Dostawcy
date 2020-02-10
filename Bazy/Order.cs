@@ -183,28 +183,33 @@ namespace Bazy
                     }
                 }
                 reader.Close();
-                MessageBox.Show(id_dostawcy.ToString());
 
                 string typ_platnosci = comboBox_platnosc.SelectedItem.ToString();
 
                 float cena = ilosc * float.Parse(koszt);
 
-                
-                string query_insert = "INSERT INTO zamówienia (id_zamowienia, typ_zamowienia, id_klienta, id_restauracji, id_dostawcy," +
+                if(id_dostawcy.Equals(""))
+                {
+                    MessageBox.Show("Wybacz, ale nie mamy teraz żadnych dostępnych dostawców. \nSpróbuj później !");
+                }
+                else
+                {
+                    string query_insert = "INSERT INTO zamówienia (id_zamowienia, typ_zamowienia, id_klienta, id_restauracji, id_dostawcy," +
                     "typ_platnosci, cena, ilosc, powodzenie, odebranie) VALUES ('" + id_zamowienia + "','" + typ_zamowienia + "','" + id_klienta
                     + "','" + id_restauracji + "','" + id_dostawcy + "','" + typ_platnosci + "','" + cena + "','" + ilosc + "', '0', '0')";
 
-                string query4 = "UPDATE dostawcy SET dostępność = 0 WHERE id_dostawcy ='" + id_dostawcy + "'";
+                    string query4 = "UPDATE dostawcy SET dostępność = 0 WHERE id_dostawcy ='" + id_dostawcy + "'";
 
-                command = new MySqlCommand(query_insert, connection);
-                if(command.ExecuteNonQuery() == 1)
-                {
-                    command = new MySqlCommand(query4, connection);
-
+                    command = new MySqlCommand(query_insert, connection);
                     if (command.ExecuteNonQuery() == 1)
                     {
-                        MessageBox.Show("Twoje zamówieni zostało złożone !\nProsimy o cierpliwość !");
-                        this.Close();
+                        command = new MySqlCommand(query4, connection);
+
+                        if (command.ExecuteNonQuery() == 1)
+                        {
+                            MessageBox.Show("Twoje zamówieni zostało złożone !\nProsimy o cierpliwość !");
+                            this.Close();
+                        }
                     }
                 }
             }

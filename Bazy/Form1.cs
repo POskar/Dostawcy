@@ -79,7 +79,9 @@ namespace Bazy
 
         private void button_confirm_Click(object sender, EventArgs e)
         {
-
+            int rowindex = dataGridView3.CurrentRow.Index;
+            string id_zamowienia = dataGridView3.Rows[rowindex].Cells[0].Value.ToString();
+            MessageBox.Show(id_zamowienia);
         }
 
         private void add_restaurator_Click(object sender, EventArgs e)
