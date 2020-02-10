@@ -79,9 +79,53 @@ namespace Bazy
 
         private void button_confirm_Click(object sender, EventArgs e)
         {
-            int rowindex = dataGridView3.CurrentRow.Index;
-            string id_zamowienia = dataGridView3.Rows[rowindex].Cells[0].Value.ToString();
-            MessageBox.Show(id_zamowienia);
+            try
+            {
+                connection = new MySqlConnection(MysSqlConnect);
+                connection.Open();
+
+                int rowindex = dataGridView3.CurrentRow.Index;
+                int id_zamowienia = int.Parse(dataGridView3.Rows[rowindex].Cells[0].Value.ToString());
+                string powodzenieIsNull = "";
+
+                string query = "SELECT powodzenie FROM zamówienia WHERE id_zamowienia ='" + id_zamowienia + "'";
+
+                MySqlCommand command = new MySqlCommand(query, connection);
+                MySqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    powodzenieIsNull = reader["powodzenie"].ToString();
+                }
+                reader.Close();
+
+                if (powodzenieIsNull.Equals("False"))
+                {
+                    string query2 = "UPDATE zamówienia SET powodzenie = 1 WHERE id_zamowienia ='" + id_zamowienia + "'";
+                    command = new MySqlCommand(query2, connection);
+
+                    DialogResult dialogResult = MessageBox.Show("Czy na pewno chcesz potwierdzić?", "Potwierdzenie", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        if (command.ExecuteNonQuery() == 1)
+                        {
+                            MessageBox.Show("Odbiór zamówienia o numerze ID '" + id_zamowienia + "' został potwierdzony !");
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("To zamówienie jest już odebrane !");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error:" + ex);
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
         private void add_restaurator_Click(object sender, EventArgs e)
@@ -91,7 +135,8 @@ namespace Bazy
 
         private void add_dostawca_Click(object sender, EventArgs e)
         {
-            
+            NewDostawca dostawca = new NewDostawca();
+            dostawca.Show();
         }
 
         private void delete_dostawca_Click(object sender, EventArgs e)

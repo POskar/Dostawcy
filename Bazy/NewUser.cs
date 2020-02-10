@@ -26,7 +26,7 @@ namespace Bazy
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(textBox_telefon.Text, "[^0-9]"))
             {
-                MessageBox.Show("Wprowadź tylko cyfry.");
+                MessageBox.Show("Wprowadź tylko cyfry !");
                 textBox_telefon.Text = textBox_telefon.Text.Remove(textBox_telefon.Text.Length - 1);
             }
         }
@@ -43,32 +43,43 @@ namespace Bazy
             }
             else
             {
-                connection = new MySqlConnection(MysSqlConnect);
-                connection.Open();
-
-                string adres = textBox_adres.Text.ToString();
-                string nr_tel = textBox_telefon.Text.ToString();
-                int id_klienta = 0;
-                string query = "SELECT * FROM klient ORDER BY id_klienta DESC LIMIT 1  ";
-
-                MySqlCommand command = new MySqlCommand(query, connection);
-                MySqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
+                try
                 {
-                    id_klienta = int.Parse(reader["id_klienta"].ToString());
+                    connection = new MySqlConnection(MysSqlConnect);
+                    connection.Open();
+
+                    string adres = textBox_adres.Text.ToString();
+                    string nr_tel = textBox_telefon.Text.ToString();
+                    int id_klienta = 0;
+                    string query = "SELECT * FROM klient ORDER BY id_klienta DESC LIMIT 1  ";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        id_klienta = int.Parse(reader["id_klienta"].ToString());
+                    }
+                    reader.Close();
+                    id_klienta += 1;
+
+                    string query_insert = "INSERT INTO klient (id_klienta, adres, nr_tel) VALUES ('" + id_klienta + "','" + adres +
+                        "','" + nr_tel + "')";
+
+                    command = new MySqlCommand(query_insert, connection);
+                    if (command.ExecuteNonQuery() == 1)
+                    {
+                        MessageBox.Show("Stworzono nowego użytkownika !");
+                        this.Close();
+                    }
                 }
-                reader.Close();
-                id_klienta += 1;
-
-                string query_insert = "INSERT INTO klient (id_klienta, adres, nr_tel) VALUES ('" + id_klienta + "','" + adres +
-                    "','" + nr_tel + "')";
-
-                command = new MySqlCommand(query_insert, connection);
-                if (command.ExecuteNonQuery() == 1)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Stworzono nowego użytkownika !");
-                    this.Close();
+                    MessageBox.Show("Error:" + ex);
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
         }

@@ -36,3 +36,4 @@ C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Debug\Bazy.pdb
 C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Debug\Bazy.Order.resources
 C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Debug\Bazy.NewUser.resources
 C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Debug\Bazy.Confirm.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Debug\Bazy.NewDostawca.resources
