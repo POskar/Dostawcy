@@ -25,7 +25,6 @@ namespace Bazy
         {
             try
             {
-                
                 connection = new MySqlConnection(MysSqlConnect);
                 string query = "SELECT id_klienta FROM klient";
                 string query2 = "SELECT nazwa FROM restauracje";
@@ -94,121 +93,126 @@ namespace Bazy
                 connection = new MySqlConnection(MysSqlConnect);
                 connection.Open();
 
-                int id_zamowienia = 0;
-
-                string query1 = "SELECT * FROM zamówienia ORDER BY id_zamowienia DESC LIMIT 1  ";
-
-                MySqlCommand command = new MySqlCommand(query1, connection);
-                MySqlDataReader reader = command.ExecuteReader();
-
-                while(reader.Read())
+                if (comboBox_id.Text.Length == 0 || comboBox_ilosc.Text.Length == 0 ||
+                    comboBox_platnosc.Text.Length == 0 || comboBox_restauracje.Text.Length == 0)
                 {
-                    id_zamowienia = int.Parse(reader["id_zamowienia"].ToString());
-                }
-                reader.Close();
-                id_zamowienia += 1;
-
-                string typ_zamowienia = "";
-                int ilosc = int.Parse(comboBox_ilosc.SelectedItem.ToString());
-                if (ilosc <= 2)
-                {
-                    typ_zamowienia = "Małe";
-                }
-                else if (ilosc > 2 && ilosc < 7)
-                {
-                    typ_zamowienia = "Średnie";
-                }
-                else if (ilosc >= 7)
-                {
-                    typ_zamowienia = "Duże";
+                    MessageBox.Show("Uzupełnij brakujące dane !");
                 }
                 else
                 {
-                    //blad bo ilosc jest pusta
-                }
 
-                string id_klienta = comboBox_id.SelectedItem.ToString();
-                string id_restauracji = "", koszt = "", nazwa_restauracji = comboBox_restauracje.SelectedItem.ToString();
-                
-                string query2 = "SELECT * FROM restauracje WHERE nazwa ='" + nazwa_restauracji + "'";
+                    int id_zamowienia = 0;
 
-                command = new MySqlCommand(query2, connection);
-                reader = command.ExecuteReader();
+                    string query1 = "SELECT * FROM zamówienia ORDER BY id_zamowienia DESC LIMIT 1  ";
 
-                while (reader.Read())
-                {
-                    id_restauracji = reader["id_restauracji"].ToString();
-                    koszt = reader["cena"].ToString();
-                }
-                reader.Close();
+                    MySqlCommand command = new MySqlCommand(query1, connection);
+                    MySqlDataReader reader = command.ExecuteReader();
 
-                string typ_pojazdu, id_dostawcy = "", query3 = "SELECT * FROM dostawcy ORDER BY typ_pojazdu DESC";
-                command = new MySqlCommand(query3, connection);
-                reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    switch (typ_zamowienia)
+                    while (reader.Read())
                     {
-                        case "Małe":
-                            if (reader["typ_pojazdu"].ToString().Equals("Rower") || reader["typ_pojazdu"].ToString().Equals("Samochód osobowy"))
-                            {
-                                if (reader["dostępność"].ToString().Equals("True"))
-                                {
-                                    id_dostawcy = reader["id_dostawcy"].ToString();
-                                }
-                            }
-                            break;
-                        case "Średnie":
-                            if (reader["typ_pojazdu"].ToString().Equals("Samochód osobowy") || reader["typ_pojazdu"].ToString().Equals("Dostawczy"))
-                            {
-                                if (reader["dostępność"].ToString().Equals("True"))
-                                {
-                                    id_dostawcy = reader["id_dostawcy"].ToString();
-                                }
-                            }
-                            break;
-                        case "Duże":
-                            if (reader["typ_pojazdu"].ToString().Equals("Dostawczy"))
-                            {
-                                if (reader["dostępność"].ToString().Equals("True"))
-                                {
-                                    id_dostawcy = reader["id_dostawcy"].ToString();
-                                }
-                            }
-                            break;
-                        default:
-                            id_dostawcy = "";
-                            break;
+                        id_zamowienia = int.Parse(reader["id_zamowienia"].ToString());
                     }
-                }
-                reader.Close();
+                    reader.Close();
+                    id_zamowienia += 1;
 
-                string typ_platnosci = comboBox_platnosc.SelectedItem.ToString();
-
-                float cena = ilosc * float.Parse(koszt);
-
-                if(id_dostawcy.Equals(""))
-                {
-                    MessageBox.Show("Wybacz, ale nie mamy teraz żadnych dostępnych dostawców. \nSpróbuj później !");
-                }
-                else
-                {
-                    string query_insert = "INSERT INTO zamówienia (id_zamowienia, typ_zamowienia, id_klienta, id_restauracji, id_dostawcy," +
-                    "typ_platnosci, cena, ilosc, powodzenie, odebranie) VALUES ('" + id_zamowienia + "','" + typ_zamowienia + "','" + id_klienta
-                    + "','" + id_restauracji + "','" + id_dostawcy + "','" + typ_platnosci + "','" + cena + "','" + ilosc + "', '0', '0')";
-
-                    string query4 = "UPDATE dostawcy SET dostępność = 0 WHERE id_dostawcy ='" + id_dostawcy + "'";
-
-                    command = new MySqlCommand(query_insert, connection);
-                    if (command.ExecuteNonQuery() == 1)
+                    string typ_zamowienia = "";
+                    int ilosc = int.Parse(comboBox_ilosc.SelectedItem.ToString());
+                    if (ilosc <= 2)
                     {
-                        command = new MySqlCommand(query4, connection);
+                        typ_zamowienia = "Małe";
+                    }
+                    else if (ilosc > 2 && ilosc < 7)
+                    {
+                        typ_zamowienia = "Średnie";
+                    }
+                    else if (ilosc >= 7)
+                    {
+                        typ_zamowienia = "Duże";
+                    }
 
+                    string id_klienta = comboBox_id.SelectedItem.ToString();
+                    string id_restauracji = "", koszt = "", nazwa_restauracji = comboBox_restauracje.SelectedItem.ToString();
+
+                    string query2 = "SELECT * FROM restauracje WHERE nazwa ='" + nazwa_restauracji + "'";
+
+                    command = new MySqlCommand(query2, connection);
+                    reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        id_restauracji = reader["id_restauracji"].ToString();
+                        koszt = reader["cena"].ToString();
+                    }
+                    reader.Close();
+
+                    string typ_pojazdu, id_dostawcy = "", query3 = "SELECT * FROM dostawcy ORDER BY typ_pojazdu DESC";
+                    command = new MySqlCommand(query3, connection);
+                    reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        switch (typ_zamowienia)
+                        {
+                            case "Małe":
+                                if (reader["typ_pojazdu"].ToString().Equals("Rower") || reader["typ_pojazdu"].ToString().Equals("Samochód osobowy"))
+                                {
+                                    if (reader["dostępność"].ToString().Equals("True"))
+                                    {
+                                        id_dostawcy = reader["id_dostawcy"].ToString();
+                                    }
+                                }
+                                break;
+                            case "Średnie":
+                                if (reader["typ_pojazdu"].ToString().Equals("Samochód osobowy") || reader["typ_pojazdu"].ToString().Equals("Dostawczy"))
+                                {
+                                    if (reader["dostępność"].ToString().Equals("True"))
+                                    {
+                                        id_dostawcy = reader["id_dostawcy"].ToString();
+                                    }
+                                }
+                                break;
+                            case "Duże":
+                                if (reader["typ_pojazdu"].ToString().Equals("Dostawczy"))
+                                {
+                                    if (reader["dostępność"].ToString().Equals("True"))
+                                    {
+                                        id_dostawcy = reader["id_dostawcy"].ToString();
+                                    }
+                                }
+                                break;
+                            default:
+                                id_dostawcy = "";
+                                break;
+                        }
+                    }
+                    reader.Close();
+
+                    string typ_platnosci = comboBox_platnosc.SelectedItem.ToString();
+
+                    float cena = ilosc * float.Parse(koszt);
+
+                    if (id_dostawcy.Equals(""))
+                    {
+                        MessageBox.Show("Wybacz, ale nie mamy teraz żadnych dostępnych dostawców. \nSpróbuj później !");
+                    }
+                    else
+                    {
+                        string query_insert = "INSERT INTO zamówienia (id_zamowienia, typ_zamowienia, id_klienta, id_restauracji, id_dostawcy," +
+                        "typ_platnosci, cena, ilosc, powodzenie) VALUES ('" + id_zamowienia + "','" + typ_zamowienia + "','" + id_klienta
+                        + "','" + id_restauracji + "','" + id_dostawcy + "','" + typ_platnosci + "','" + cena + "','" + ilosc + "', '0')";
+
+                        string query4 = "UPDATE dostawcy SET dostępność = 0 WHERE id_dostawcy ='" + id_dostawcy + "'";
+
+                        command = new MySqlCommand(query_insert, connection);
                         if (command.ExecuteNonQuery() == 1)
                         {
-                            MessageBox.Show("Twoje zamówieni zostało złożone !\nProsimy o cierpliwość !");
-                            this.Close();
+                            command = new MySqlCommand(query4, connection);
+
+                            if (command.ExecuteNonQuery() == 1)
+                            {
+                                MessageBox.Show("Twoje zamówieni zostało złożone !\nProsimy o cierpliwość !");
+                                this.Close();
+                            }
                         }
                     }
                 }

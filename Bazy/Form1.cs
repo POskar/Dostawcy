@@ -86,9 +86,10 @@ namespace Bazy
 
                 int rowindex = dataGridView3.CurrentRow.Index;
                 int id_zamowienia = int.Parse(dataGridView3.Rows[rowindex].Cells[0].Value.ToString());
+                int id_dostawcy = 0;
                 string powodzenieIsNull = "";
 
-                string query = "SELECT powodzenie FROM zamówienia WHERE id_zamowienia ='" + id_zamowienia + "'";
+                string query = "SELECT * FROM zamówienia WHERE id_zamowienia ='" + id_zamowienia + "'";
 
                 MySqlCommand command = new MySqlCommand(query, connection);
                 MySqlDataReader reader = command.ExecuteReader();
@@ -96,6 +97,7 @@ namespace Bazy
                 while (reader.Read())
                 {
                     powodzenieIsNull = reader["powodzenie"].ToString();
+                    id_dostawcy = int.Parse(reader["id_dostawcy"].ToString());
                 }
                 reader.Close();
 
@@ -109,7 +111,13 @@ namespace Bazy
                     {
                         if (command.ExecuteNonQuery() == 1)
                         {
-                            MessageBox.Show("Odbiór zamówienia o numerze ID '" + id_zamowienia + "' został potwierdzony !");
+                            string query3 = "UPDATE dostawcy SET dostępność = 1 WHERE id_dostawcy ='" + id_dostawcy + "'";
+                            command = new MySqlCommand(query3, connection);
+
+                            if (command.ExecuteNonQuery() == 1)
+                            {
+                                MessageBox.Show("Odbiór zamówienia o numerze ID '" + id_zamowienia + "' został potwierdzony !");
+                            }
                         }
                     }
                 }
@@ -130,7 +138,8 @@ namespace Bazy
 
         private void add_restaurator_Click(object sender, EventArgs e)
         {
-            
+            NewRestauracja restauracja = new NewRestauracja();
+            restauracja.Show();
         }
 
         private void add_dostawca_Click(object sender, EventArgs e)
@@ -141,28 +150,12 @@ namespace Bazy
 
         private void delete_dostawca_Click(object sender, EventArgs e)
         {
-
+           
         }
 
         private void delete_restaurator_Click(object sender, EventArgs e)
         {
 
         }
-
-        /*private void button_update_Click(object sender, EventArgs e) //aktualizacja danych
-        {
-            try
-            {
-                MySqlCommandBuilder cmb1 = new MySqlCommandBuilder(da);
-
-                da.Update(dt);
-                MessageBox.Show("Zaktualizowano", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error:" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        */
     }
 }

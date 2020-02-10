@@ -44,6 +44,8 @@ namespace Bazy
         {
             try
             {
+                connection = new MySqlConnection(MysSqlConnect);
+                connection.Open();
                 string nazwisko = "", imie = "", typ_pojazdu = "";
                 if(textBox_imie.Text.Equals("") || textBox_nazwisko.Text.Equals("") || comboBox_typ_pojazdu.Text.Equals(""))
                 {
@@ -51,9 +53,6 @@ namespace Bazy
                 }
                 else
                 {
-                    connection = new MySqlConnection(MysSqlConnect);
-                    connection.Open();
-
                     int id_dostawcy = 0;
 
                     string query = "SELECT id_dostawcy FROM dostawcy ORDER BY id_dostawcy DESC LIMIT 1  ";
