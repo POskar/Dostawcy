@@ -1,0 +1,10 @@
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.csprojAssemblyReference.cache
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.Confirm.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.Form1.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.Menu.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.NewDostawca.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.NewRestauracja.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.NewUser.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.Order.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.Properties.Resources.resources
+C:\Users\Oskar Pieniak\Downloads\Bazy-master\Bazy\obj\Release\Bazy.csproj.GenerateResource.cache

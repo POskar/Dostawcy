@@ -22,16 +22,18 @@ namespace Bazy
         }
         
         string sql,sql2,sql3, MysSqlConnect = "datasource=localhost; port=3306; username=root; password=; database=Bazadanych_2020";
-        MySqlConnection connection;
-        MySqlDataAdapter da,da2,da3;
-        DataTable dt,dt2,dt3;
+        MySqlConnection connection, conn;
+        MySqlDataAdapter da, da2, da3;
+        DataTable dt, dt2, dt3;
+        MySqlCommand cmd;
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
             connection = new MySqlConnection(MysSqlConnect);
+            conn = new MySqlConnection(MysSqlConnect);
             sql = "SELECT id_dostawcy, imię AS 'Imię', nazwisko AS 'Nazwisko', typ_pojazdu,dostępność FROM dostawcy;";
-            sql2 = "SELECT id_restauracji, nazwa, adres,właściciel FROM restauracje;";
+            sql2 = "SELECT id_restauracji, nazwa, adres, właściciel, cena FROM restauracje;";
             sql3 = "SELECT id_zamowienia, d.imię AS 'Imie dostawcy', d.nazwisko AS 'Nazwisko Dostawcy',r.nazwa AS 'Nazwa Restauracji'," +
                 "r.adres AS 'Adres Restauracji',z.typ_platnosci,z.cena,z.ilosc,z.powodzenie, k.adres AS 'Adres Klienta' " +
                 "FROM zamówienia z INNER JOIN dostawcy d ON d.id_dostawcy = z.id_dostawcy INNER JOIN restauracje r " +
@@ -52,11 +54,12 @@ namespace Bazy
                 da3 = new MySqlDataAdapter(sql3, connection);
                 dt3 = new DataTable();
                 da3.Fill(dt3);
-
+                connection.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error:" + ex);
+                connection.Close();
             }
             finally
             {
@@ -68,7 +71,6 @@ namespace Bazy
 
                 dataGridView3.Refresh();
                 dataGridView3.DataSource = dt3;
-
             }
         }
 
@@ -111,6 +113,7 @@ namespace Bazy
                     {
                         if (command.ExecuteNonQuery() == 1)
                         {
+                            connection.Open();
                             string query3 = "UPDATE dostawcy SET dostępność = 1 WHERE id_dostawcy ='" + id_dostawcy + "'";
                             command = new MySqlCommand(query3, connection);
 
@@ -150,12 +153,105 @@ namespace Bazy
 
         private void delete_dostawca_Click(object sender, EventArgs e)
         {
-           
+            String selected = dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
+            int id = Convert.ToInt32(selected);
+            string querry = "SELECT COUNT(powodzenie) FROM zamówienia z INNER JOIN dostawcy d ON z.id_dostawcy = d.id_dostawcy WHERE d.id_dostawcy='" + id + "' AND z.powodzenie='0'";
+            MySqlCommand command = new MySqlCommand(querry, conn);
+            conn.Open();
+            MySqlDataReader reader = command.ExecuteReader();
+
+
+            reader.Read();
+
+            if (reader["COUNT(powodzenie)"].ToString() == "0")
+            {
+                sql = " DELETE FROM dostawcy WHERE id_dostawcy='" + id + "'";
+                cmd = new MySqlCommand(sql, connection);
+                connection.Open();
+                String dostepny = dataGridView1.SelectedRows[0].Cells[4].Value.ToString();
+                try
+                {
+                    da = new MySqlDataAdapter(cmd);
+
+                    da.DeleteCommand = connection.CreateCommand();
+
+                    da.DeleteCommand.CommandText = sql;
+
+                    if (MessageBox.Show("Czy na pewno usunąć?", "Usuwanie", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+                    {
+                        if (cmd.ExecuteNonQuery() > 0)
+                        {
+                            MessageBox.Show("Usunięto");
+                        }
+                    }
+
+                    connection.Close();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    connection.Close();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Nie można usunąć aktywnego kierowcy", "Usuwanie", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                connection.Close();
+            }
+            conn.Close();
         }
 
         private void delete_restaurator_Click(object sender, EventArgs e)
         {
+            int rowindex = dataGridView2.CurrentRow.Index;
+            String selected = dataGridView2.Rows[rowindex].Cells[0].Value.ToString();
+            int idd = Convert.ToInt32(selected);
+            string querry = "SELECT COUNT(powodzenie) FROM zamówienia z INNER JOIN restauracje r ON z.id_restauracji = r.id_restauracji WHERE z.powodzenie = '0' AND r.id_restauracji = '" + idd + "'";
+            MySqlCommand command = new MySqlCommand(querry, conn);
+            conn.Open();
+            MySqlDataReader reader = command.ExecuteReader();
+            reader.Read();
 
+
+            if (reader["COUNT(powodzenie)"].ToString() == "0")
+            {
+                sql = " DELETE FROM restauracje WHERE id_restauracji='" + idd + "'";
+                cmd = new MySqlCommand(sql, connection);
+                connection.Open();
+                try
+                {
+                    da = new MySqlDataAdapter(cmd);
+
+                    da.DeleteCommand = connection.CreateCommand();
+
+                    da.DeleteCommand.CommandText = sql;
+
+                    if (MessageBox.Show("Czy na pewno usunąć?", "Usuwanie", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+                    {
+                        if (cmd.ExecuteNonQuery() > 0)
+                        {
+                            MessageBox.Show("Usunięto");
+                        }
+                    }
+
+                    connection.Close();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    connection.Close();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Nie można usunąć aktywnej restauracji", "Usuwanie", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                connection.Close();
+            }
+            conn.Close();
         }
     }
 }

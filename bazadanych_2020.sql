@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 10, 2020 at 01:01 AM
+-- Generation Time: Feb 11, 2020 at 10:22 AM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.11
 
@@ -41,11 +41,10 @@ CREATE TABLE `dostawcy` (
 --
 
 INSERT INTO `dostawcy` (`id_dostawcy`, `imię`, `nazwisko`, `typ_pojazdu`, `dostępność`) VALUES
-(1, 'Adam', 'A', 'Samochód osobowy', 1),
-(2, 'Bartosz', 'B', 'Rower', 0),
-(3, 'Eugeniusz', 'E', 'Dostawczy', 0),
-(8, 'Cyprian', 'C', 'Samochód osobowy', 0),
-(9, 'Denis', 'D', 'Rower', 1);
+(2, 'Bartek', 'B', 'Rower', 1),
+(3, 'Cyprian', 'C', 'Dostawczy', 0),
+(4, 'Denis', 'D', 'Rower', 1),
+(5, 'Eugeniusz', 'E', 'Samochód osobowy', 0);
 
 -- --------------------------------------------------------
 
@@ -64,10 +63,10 @@ CREATE TABLE `klient` (
 --
 
 INSERT INTO `klient` (`id_klienta`, `adres`, `nr_tel`) VALUES
-(1, 'szosowa', 518369123),
-(2, 'szosowa', 518369124),
-(3, 'Deszczowa', 667511520),
-(4, 'asdasdasd', 512312312);
+(1, 'Szosowa', 667510519),
+(2, 'Brukowa', 619302938),
+(3, 'Zielona', 509831290),
+(4, 'Zimowa', 732018394);
 
 -- --------------------------------------------------------
 
@@ -89,8 +88,9 @@ CREATE TABLE `restauracje` (
 
 INSERT INTO `restauracje` (`id_restauracji`, `nazwa`, `adres`, `właściciel`, `cena`) VALUES
 (1, 'Abstrakcja', 'Grunwaldzka', 'Henryk', 32.5),
-(2, 'Bajera', 'Adresowa', 'Jarosław', 28.75),
-(4, 'Cytrynarnia', 'Cypriana', 'Bogdan', 24.34);
+(2, 'Bella', 'Warszawska', 'Jarosław', 24.9),
+(3, 'Cytrynarnia', 'Cytrynowa', 'Janusz', 19.75),
+(4, 'Dębowa', 'Kasztanowa', 'Mirosław', 37.2);
 
 -- --------------------------------------------------------
 
@@ -107,27 +107,16 @@ CREATE TABLE `zamówienia` (
   `typ_platnosci` set('Karta','Gotówka','BLIK') COLLATE utf8_polish_ci NOT NULL,
   `cena` float NOT NULL,
   `ilosc` int(11) NOT NULL,
-  `powodzenie` tinyint(1) NOT NULL,
-  `odebranie` tinyint(1) NOT NULL
+  `powodzenie` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Dumping data for table `zamówienia`
 --
 
-INSERT INTO `zamówienia` (`id_zamowienia`, `typ_zamowienia`, `id_klienta`, `id_restauracji`, `id_dostawcy`, `typ_platnosci`, `cena`, `ilosc`, `powodzenie`, `odebranie`) VALUES
-(1, 'Małe', 2, 1, 2, 'BLIK', 37.3, 2, 0, 0),
-(2, 'Średnie', 1, 1, 1, 'Gotówka', 22.75, 2, 1, 0),
-(3, 'Małe', 2, 1, 1, 'Karta', 65, 2, 0, 0),
-(4, 'Średnie', 1, 2, 1, 'Karta', 86.25, 3, 0, 0),
-(5, 'Małe', 2, 1, 1, 'Gotówka', 65, 2, 0, 0),
-(6, 'Małe', 4, 2, 1, 'Gotówka', 57.5, 2, 0, 0),
-(7, 'Duże', 4, 2, 3, 'Karta', 287.5, 10, 0, 0),
-(8, 'Małe', 4, 1, 1, 'Karta', 65, 2, 0, 0),
-(9, 'Duże', 4, 4, 3, 'Karta', 243.4, 10, 0, 0),
-(10, 'Duże', 4, 4, 3, 'Karta', 243.4, 10, 0, 0),
-(11, 'Duże', 3, 2, 3, 'Karta', 287.5, 10, 0, 0),
-(12, 'Duże', 4, 4, 3, 'BLIK', 243.4, 10, 0, 0);
+INSERT INTO `zamówienia` (`id_zamowienia`, `typ_zamowienia`, `id_klienta`, `id_restauracji`, `id_dostawcy`, `typ_platnosci`, `cena`, `ilosc`, `powodzenie`) VALUES
+(1, 'Średnie', 1, 2, 5, 'Gotówka', 74.7, 3, 0),
+(2, 'Duże', 2, 4, 3, 'BLIK', 297.6, 8, 0);
 
 --
 -- Indexes for dumped tables
@@ -169,8 +158,8 @@ ALTER TABLE `zamówienia`
 --
 ALTER TABLE `zamówienia`
   ADD CONSTRAINT `zamówienia_ibfk_1` FOREIGN KEY (`id_klienta`) REFERENCES `klient` (`id_klienta`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `zamówienia_ibfk_2` FOREIGN KEY (`id_dostawcy`) REFERENCES `dostawcy` (`id_dostawcy`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `zamówienia_ibfk_3` FOREIGN KEY (`id_restauracji`) REFERENCES `restauracje` (`id_restauracji`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `zamówienia_ibfk_2` FOREIGN KEY (`id_dostawcy`) REFERENCES `dostawcy` (`id_dostawcy`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `zamówienia_ibfk_3` FOREIGN KEY (`id_restauracji`) REFERENCES `restauracje` (`id_restauracji`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
